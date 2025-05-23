@@ -1,4 +1,3 @@
-# db_config.py
 from typing import List, Dict, Any
 
 DB_CONFIG: Dict[str, str] = {
@@ -21,7 +20,6 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
                """,
         "params": [{"name": "username", "label": "Ім'я користувача (частково):", "type": "line_edit"}]
     },
-    # db_config.py, SPECIAL_QUERIES (змінений запит)
     {
         "name": "Показати всіх авторів та кількість їхніх книг",
         "sql":
@@ -50,7 +48,7 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
                             WHEN 'ThreeStars' THEN 3.0
                             WHEN 'FourStars' THEN 4.0
                             WHEN 'FiveStars' THEN 5.0
-                            ELSE 0.0 -- Або NULL, якщо оцінки без зірок не повинні враховуватися
+                            ELSE 0.0 
                         END
                     ), 0.0),2) AS "Середній рейтинг",
                 COUNT(e.evaluation_id) AS "Кількість оцінок"
@@ -85,7 +83,7 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
                 u.user_id, u.username
             ORDER BY
                 "Кількість коментарів" DESC, u.username
-            LIMIT 20; -- Обмежимо для прикладу
+            LIMIT 20; 
         """,
         "params": []
     },
@@ -102,7 +100,7 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
                         JOIN
                     public.book b ON bl.book_id = b.book_id
                WHERE u.username ILIKE %s
-                 AND bl.status = 'Хочу прочитати' -- Або ваш відповідний ENUM 'Planning'/'WantToRead'
+                 AND bl.status = 'Хочу прочитати' 
                  AND b.is_archived = false
                ORDER BY
                    bl.date_added DESC;
@@ -118,8 +116,8 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
                         JOIN
                     public.book_list bl ON u.user_id = bl.user_id
                         LEFT JOIN
-                    public.evaluation e ON u.user_id = e.user_id -- Перевіряємо, чи є хоч одна оцінка від користувача
-               WHERE e.evaluation_id IS NULL -- Користувач не має жодної оцінки
+                    public.evaluation e ON u.user_id = e.user_id
+               WHERE e.evaluation_id IS NULL 
                GROUP BY u.user_id, u.username
                HAVING COUNT(DISTINCT bl.book_id) > %s
                ORDER BY "Кількість книг у списках" DESC, u.username;
@@ -143,9 +141,7 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
                     public."user" u_list ON bl.user_id = u_list.user_id
                         LEFT JOIN
                     public.evaluation e ON b.book_id = e.book_id AND (bl.user_id = e.user_id OR bl.user_id IS NULL)
-                        -- Показуємо оцінку, якщо вона від того ж користувача, що й запис у book_list, 
-                        -- або всі оцінки, якщо книга не в чиємусь списку (але це менш логічно для "історії читання")
-                        -- Можливо, краще окремий JOIN для всіх оцінок книги, якщо потрібно.
+
                         LEFT JOIN
                     public."user" u_eval ON e.user_id = u_eval.user_id
                WHERE b.title ILIKE %s -- Пошук книги за назвою
@@ -180,8 +176,7 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
                """,
         "params": []
     },
-# db_config.py
-# ... (попередні запити, включаючи виправлені 3, 5 та 10) ...
+
     {
         "name": "Книги без оцінок, але в списках користувачів",
         "sql": """
@@ -205,7 +200,7 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
     {
         "name": "Рейтинг книги vs Середній рейтинг її жанру",
         "sql": """
-               WITH BookRatings AS ( -- Розрахунок середнього рейтингу для кожної книги
+               WITH BookRatings AS ( 
                    SELECT b.book_id,
                           b.title,
                           b.genre,
@@ -241,8 +236,7 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
                """,
         "params": [{"name": "book_title_compare", "label": "Назва книги (частково):", "type": "line_edit"}]
     },
-    # db_config.py
-    # db_confi
+
     {
         "name": "Прочитано, але не оцінено користувачем", # Запит 16
         "sql": """
@@ -262,9 +256,9 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
                 public.book b ON bl.book_id = b.book_id
             WHERE
                 u.username ILIKE %s
-                AND bl.status = 'Хочу прочитати' -- АБО ВАШЕ ЗНАЧЕННЯ ДЛЯ "ПРОЧИТАНО"
+                AND bl.status = 'Хочу прочитати' 
                 AND b.is_archived = false
-                AND NOT EXISTS ( -- Перевірка, що для цієї книги та користувача немає оцінки
+                AND NOT EXISTS ( 
                     SELECT 1
                     FROM public.evaluation e
                     WHERE e.user_id = u.user_id AND e.book_id = b.book_id
@@ -278,7 +272,7 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
     },
 
     {
-        "name": "Книги з 'поляризуючими' оцінками", # Новий Запит 15
+        "name": "Книги з 'поляризуючими' оцінками",
         "sql": """
             WITH BookEvaluationStats AS (
                 SELECT
@@ -292,7 +286,7 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
                     COUNT(e.evaluation_id) as num_evaluations
                 FROM public.evaluation e
                 GROUP BY e.book_id
-                HAVING COUNT(e.evaluation_id) >= %s -- Книга повинна мати хоча б N оцінок
+                HAVING COUNT(e.evaluation_id) >= %s 
             )
             SELECT
                 b.title AS "Назва книги",
@@ -307,8 +301,8 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
             FROM public.book b
             JOIN BookEvaluationStats bes ON b.book_id = bes.book_id
             WHERE b.is_archived = false
-              AND bes.min_numeric_rate <= %s -- Є низькі оцінки (наприклад, <= 2)
-              AND bes.max_numeric_rate >= %s -- Є високі оцінки (наприклад, >= 4)
+              AND bes.min_numeric_rate <= %s 
+              AND bes.max_numeric_rate >= %s 
             ORDER BY bes.num_evaluations DESC, b.title;
         """,
         "params": [
@@ -317,11 +311,9 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
             {"name": "high_rate_threshold", "label": "Поріг високої оцінки (>=):", "type": "line_edit", "param_type": "integer"}
         ]
     },
-# db_config.py
-# ... (попередні запити, включаючи Запит 17) ...
-    # --- НОВІ ЗАПИТИ (18-21) ---
+
     {
-        "name": "Детальний список книг користувача з оцінками", # Запит 18
+        "name": "Детальний список книг користувача з оцінками",
         "sql": """
             SELECT
                 u.username AS "Користувач",
@@ -333,7 +325,7 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
                 bl.status AS "Статус читання",
                 bl.date_added AS "Дата додавання до списку",
                 b.average_rating AS "Сер. рейтинг книги (загальний)",
-                CASE e_user.rate -- Оцінка саме цього користувача
+                CASE e_user.rate 
                     WHEN 'OneStar' THEN 1 WHEN 'TwoStars' THEN 2 WHEN 'ThreeStars' THEN 3
                     WHEN 'FourStars' THEN 4 WHEN 'FiveStars' THEN 5 ELSE NULL
                 END AS "Оцінка користувача",
@@ -380,7 +372,7 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
         ]
     },
     {
-        "name": "Автори та середня к-сть сторінок їхніх книг", # Запит 20
+        "name": "Автори та середня к-сть сторінок їхніх книг",
         "sql": """
             SELECT
                 a.first_name || ' ' || a.last_name AS "Автор",
@@ -391,13 +383,13 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
             JOIN public.book b ON ba.book_id = b.book_id
             WHERE b.is_archived = false AND b.page_number IS NOT NULL
             GROUP BY a.author_id, a.first_name, a.last_name
-            HAVING COUNT(b.book_id) > 0 -- Показувати авторів, у яких є хоча б одна неархівована книга з кількістю сторінок
+            HAVING COUNT(b.book_id) > 0 
             ORDER BY "Кількість книг" DESC, "Автор";
         """,
         "params": []
     },
     {
-        "name": "Автори, чиї книги найчастіше планують прочитати", # Запит 21
+        "name": "Автори, чиї книги найчастіше планують прочитати",
         "sql": """
             SELECT
                 a.first_name || ' ' || a.last_name AS "Автор",
@@ -406,11 +398,11 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
             JOIN public.book_author ba ON a.author_id = ba.author_id
             JOIN public.book b ON ba.book_id = b.book_id
             JOIN public.book_list bl ON b.book_id = bl.book_id
-            WHERE bl.status = 'Хочу прочитати' -- ЗАМІНІТЬ 'Planning' НА ВАШЕ КОРЕКТНЕ ENUM ЗНАЧЕННЯ ДЛЯ "ПЛАНУЮ"
+            WHERE bl.status = 'Хочу прочитати' 
               AND b.is_archived = false
             GROUP BY a.author_id, a.first_name, a.last_name
             ORDER BY "К-сть додавань до 'Планую'" DESC, "Автор"
-            LIMIT 20; -- Показати топ-20
+            LIMIT 20; 
         """,
         "params": []
     },
@@ -424,7 +416,7 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
                FROM public.book_list bl
                         JOIN public."user" u ON bl.user_id = u.user_id
                         JOIN public.book b ON bl.book_id = b.book_id
-               WHERE bl.status = 'Читаю' -- ЗАМІНІТЬ 'Читаю' НА ВАШЕ КОРЕКТНЕ ENUM ЗНАЧЕННЯ
+               WHERE bl.status = 'Читаю' 
                  AND b.is_archived = false
                  AND bl.date_added <= (CURRENT_DATE - CAST((%s || ' months') AS INTERVAL))
                ORDER BY "Приблизно місяців у статусі" DESC, u.username, b.title;
@@ -435,7 +427,7 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
         ]
     },
     {
-        "name": "Автори, що пишуть у >= N жанрах",  # Запит 28
+        "name": "Автори, що пишуть у >= N жанрах",
         "sql": """
                WITH AuthorGenreCounts AS (SELECT a.author_id,
                                                  a.first_name || ' ' || a.last_name AS author_name,
@@ -464,24 +456,24 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
         ]
     },
     {
-        "name": "Топ користувачів за кількістю прочитаних сторінок",  # Запит 29
+        "name": "Топ користувачів за кількістю прочитаних сторінок",
         "sql": """
                SELECT u.username         AS "Користувач",
                       SUM(b.page_number) AS "Всього сторінок прочитано"
                FROM public."user" u
                         JOIN public.book_list bl ON u.user_id = bl.user_id
                         JOIN public.book b ON bl.book_id = b.book_id
-               WHERE bl.status = 'Прочитано'   -- ЗАМІНІТЬ 'Прочитано' НА ВАШЕ КОРЕКТНЕ ENUM ЗНАЧЕННЯ
+               WHERE bl.status = 'Прочитано'   
                  AND b.is_archived = false
-                 AND b.page_number IS NOT NULL -- Враховувати тільки книги з вказаною кількістю сторінок
+                 AND b.page_number IS NOT NULL 
                GROUP BY u.user_id, u.username
                HAVING SUM(b.page_number) > 0
-               ORDER BY "Всього сторінок прочитано" DESC LIMIT 5; -- Показати топ-20
+               ORDER BY "Всього сторінок прочитано" DESC LIMIT 5; 
                """,
         "params": []
     },
     {
-        "name": "Жанри з найбільшою сер. к-стю коментарів на книгу",  # Запит 30
+        "name": "Жанри з найбільшою сер. к-стю коментарів на книгу",
         "sql": """
                WITH BookCommentCounts AS (SELECT b.book_id,
                                                  b.genre,
@@ -494,7 +486,7 @@ SPECIAL_QUERIES: List[Dict[str, Any]] = [
                       ROUND(AVG(bcc.comment_count_for_book), 2) AS "Сер. к-сть коментарів на книгу"
                FROM BookCommentCounts bcc
                GROUP BY bcc.genre
-               HAVING COUNT(DISTINCT bcc.book_id) >= %s -- Враховувати жанри з хоча б N книгами
+               HAVING COUNT(DISTINCT bcc.book_id) >= %s 
                ORDER BY "Сер. к-сть коментарів на книгу" DESC, "Жанр";
                """,
         "params": [
