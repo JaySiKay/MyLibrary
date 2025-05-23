@@ -1,0 +1,281 @@
+/* styles.qss */
+
+/* 1. Общие Принципы Дизайна - Задаем основной шрифт, если нужно глобально */
+QWidget {
+    /* font-family: "System";  Можете раскомментировать и указать свой шрифт */
+    /* font-size: 10pt; */ /* Общий размер шрифта, если не переопределен */
+}
+
+/* 2.1. Главное Окно (QMainWindow) */
+QMainWindow {
+    background-color: #e9f5e9; /* светло-зеленоватый */
+}
+
+/* 2.2. Система Вкладок (QTabWidget, QTabBar) */
+
+/* 2.2.1. Панель Содержимого Вкладки (QTabWidget::pane) */
+QTabWidget::pane {
+    background-color: white; /* #FFFFFF */
+    border-top: 2px solid #8FBC8F; /* сплошная, тёмно-зелёная, толщиной 2 пикселя */
+    margin-top: -1px; /* Компенсация, чтобы панель прилегала к активной вкладке */
+}
+
+/* 2.2.2. Ярлычок Неактивной/Ненаведённой Вкладки (QTabBar::tab) */
+QTabBar::tab {
+    background-color: #f0fff0; /* Honeydew - очень светло-зелёный */
+    border: 1px solid #a9d1a9; /* сплошная, светло-зелёная */
+    border-bottom-color: #8FBC8F; /* тёмно-зелёный, для эффекта "приподнятости" */
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    min-width: 10ex; /* десять раз ширина буквы 'x' текущего шрифта */
+    padding: 6px 10px 6px 10px; /* top, right, bottom, left */
+    color: #006400; /* тёмно-зелёный */
+    font-weight: bold;
+    margin-right: 2px; /* Небольшой отступ между вкладками */
+}
+
+/* 2.2.3. Ярлычок Активной или Наведённой Вкладки (QTabBar::tab:selected, QTabBar::tab:hover) */
+QTabBar::tab:selected, QTabBar::tab:hover {
+    background-color: #98FB98; /* PaleGreen - ярко-светло-зелёный */
+    color: #004d00; /* более тёмно-зелёный */
+    border-color: #70a870; /* более тёмная зелёная */
+    border-bottom-color: #98FB98; /* Цвет фона, чтобы нижняя граница исчезла и вкладка "слилась" с pane */
+}
+
+QTabBar::tab:selected {
+    margin-bottom: -1px; /* Чтобы активная вкладка немного "заезжала" на pane */
+}
+
+/* 2.3. Таблицы Данных (QTableWidget) */
+QTableWidget {
+    border: 1px solid #a9d1a9; /* светло-зелёная */
+    gridline-color: #c1e1c1; /* бледно-зелёный */
+    background-color: white; /* #FFFFFF */
+    alternate-background-color: #fafffa; /* MintCream - очень светло-зелёный */
+    selection-background-color: #A0E6A0; /* светло-зелёный */
+    selection-color: #003300; /* очень тёмно-зелёный */
+}
+
+/* 2.4. Заголовки Таблиц (QHeaderView::section) */
+QHeaderView::section {
+    background-color: #C8E6C9; /* бледно-зелёный */
+    padding: 5px;
+    border: 1px solid #a9d1a9; /* светло-зелёная */
+    font-weight: bold;
+    color: #005000; /* тёмно-зелёный */
+}
+
+/* 2.5. Кнопки (QPushButton) */
+
+/* 2.5.1. Общий Стиль Кнопок */
+QPushButton {
+    background-color: #2E8B57; /* SeaGreen - зелёный */
+    color: white; /* #FFFFFF */
+    border: 1px solid #20603C; /* тёмно-зелёная */
+    padding: 7px 14px 7px 14px; /* top, right, bottom, left */
+    border-radius: 5px;
+    font-size: 10pt;
+}
+
+/* 2.5.2. Состояние Наведения (QPushButton:hover) */
+QPushButton:hover {
+    background-color: #3CB371; /* MediumSeaGreen - светлее зелёный */
+}
+
+/* 2.5.3. Состояние Нажатия (QPushButton:pressed) */
+QPushButton:pressed {
+    background-color: #20603C; /* тёмно-зелёный, как граница */
+}
+
+/* 2.5.4. Специальная Кнопка Подключения (QPushButton#ConnectButton) */
+/* Важно: objectName кнопки в коде Python должен быть "ConnectButton" */
+QPushButton#ConnectButton {
+    background-color: #4CAF50; /* ярко-зелёный */
+    color: white;
+    font-size: 12pt;
+    padding: 10px 20px 10px 20px;
+}
+
+/* 2.5.5. Специальная Кнопка Подключения при Наведении (QPushButton#ConnectButton:hover) */
+QPushButton#ConnectButton:hover {
+    background-color: #45a049; /* чуть темнее зелёный */
+}
+
+/* 2.6. Элементы Ввода (QLineEdit, QComboBox, QSpinBox, QDoubleSpinBox, QDateEdit, QTextEdit) */
+QLineEdit, QComboBox, QSpinBox, QDoubleSpinBox, QDateEdit, QTextEdit {
+    padding: 6px;
+    border: 1px solid #a9d1a9; /* светло-зелёная */
+    border-radius: 4px;
+    background-color: white; /* #FFFFFF */
+    color: #333333; /* тёмно-серый */
+}
+
+/* Стили для выпадающего списка QComboBox */
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 15px;
+    border-left-width: 1px;
+    border-left-color: #a9d1a9;
+    border-left-style: solid;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+QComboBox::down-arrow {
+    image: url(:/qt-project.org/styles/commonstyle/images/arrow-down.png); /* Стандартная стрелка Qt, может потребоваться настройка путей или использование своей иконки */
+}
+QComboBox QAbstractItemView { /* Стиль для выпадающего списка */
+    border: 1px solid #a9d1a9;
+    selection-background-color: #98FB98; /* PaleGreen */
+    background-color: white;
+    color: #333333;
+}
+
+
+/* 2.7. Метки (QLabel) */
+
+/* 2.7.1. Общий Стиль Меток */
+QLabel {
+    color: #004d00; /* тёмно-зелёный */
+    font-size: 9pt;
+    background-color: transparent; /* Чтобы фон QMainWindow не перекрывался */
+}
+
+/* 2.7.2. Метка Статуса (QLabel#StatusLabel) */
+/* Важно: objectName метки в коде Python должен быть "StatusLabel" */
+QLabel#StatusLabel {
+    font-size: 11pt;
+    font-weight: bold;
+    /* Цвет текста будет устанавливаться программно */
+}
+
+/* 2.8. Окна Сообщений (QMessageBox) */
+/* QMessageBox часто использует системные стили, но можно попробовать переопределить */
+QMessageBox {
+    /* background-color: #e9f5e9; */ /* Можно попробовать задать фон */
+}
+QMessageBox QLabel { /* Метки внутри QMessageBox */
+    color: black; /* #000000 */
+    font-size: 10pt;
+    background-color: transparent;
+}
+/* Кнопки внутри QMessageBox наследуют общий стиль QPushButton, если не переопределены */
+
+/* 2.9. Списки (QListWidget) */
+QListWidget {
+    border: 1px solid #a9d1a9; /* светло-зелёная */
+    background-color: #fafffa; /* MintCream - очень светло-зелёный */
+    alternate-background-color: #f0fff0; /* Honeydew для выделения */
+}
+QListWidget::item:selected {
+    background-color: #98FB98; /* PaleGreen */
+    color: #004d00;
+}
+QListWidget::item:hover {
+    background-color: #C8E6C9; /* бледно-зелёный */
+}
+
+
+/* 2.10. Специализированные Текстовые Поля */
+
+/* 2.10.1. Поле для SQL-запроса (QTextEdit#SqlQueryDisplay) */
+/* Важно: objectName поля в коде Python должен быть "SqlQueryDisplay" */
+QTextEdit#SqlQueryDisplay {
+    font-family: "Courier New", Courier, monospace;
+    background-color: #fdfdfd; /* очень светлый, почти белый */
+    border: 1px solid #a9d1a9;
+    min-height: 100px;
+}
+
+/* 2.10.2. Виджет для Параметров Спец. Запросов (QWidget#ParamsInputWidget) */
+/* Важно: objectName виджета в коде Python должен быть "ParamsInputWidget" */
+/* Специальные стили не определены; наследует стили дочерних элементов */
+/* Если нужно, можно задать фон или рамку для всей области параметров: */
+
+/*QWidget#ParamsInputWidget {*/
+/*    background-color: #f0f8f0;*/
+/*    border: 1px dashed #a9d1a9;*/
+/*    padding: 5px;*/
+/*}*/
+
+/* Дополнительные стили для QSplitter, если нужно */
+QSplitter::handle {
+    background-color: #8FBC8F; /* Цвет разделителя */
+    /* image: url(my-splitter-handle-image.png); */ /* Можно задать иконку */
+}
+QSplitter::handle:horizontal {
+    width: 5px;
+}
+QSplitter::handle:vertical {
+    height: 5px;
+}
+QSplitter::handle:pressed {
+    background-color: #70a870; /* Цвет при нажатии */
+}
+
+/* Стили для ScrollBar, если нужно кастомизировать */
+QScrollBar:vertical {
+    border: 1px solid #a9d1a9;
+    background: #f0fff0;
+    width: 15px;
+    margin: 15px 0 15px 0;
+}
+QScrollBar::handle:vertical {
+    background: #C8E6C9;
+    min-height: 20px;
+    border-radius: 7px;
+}
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    border: 1px solid #a9d1a9;
+    background: #e0eee0;
+    height: 14px;
+    subcontrol-origin: margin;
+}
+QScrollBar::add-line:vertical {
+    subcontrol-position: bottom;
+}
+QScrollBar::sub-line:vertical {
+    subcontrol-position: top;
+}
+QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {
+    border: 2px solid #a9d1a9;
+    width: 3px;
+    height: 3px;
+    background: #005000;
+}
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+    background: none;
+}
+
+QScrollBar:horizontal {
+    border: 1px solid #a9d1a9;
+    background: #f0fff0;
+    height: 15px;
+    margin: 0 15px 0 15px;
+}
+QScrollBar::handle:horizontal {
+    background: #C8E6C9;
+    min-width: 20px;
+    border-radius: 7px;
+}
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    border: 1px solid #a9d1a9;
+    background: #e0eee0;
+    width: 14px;
+    subcontrol-origin: margin;
+}
+QScrollBar::add-line:horizontal {
+    subcontrol-position: right;
+}
+QScrollBar::sub-line:horizontal {
+    subcontrol-position: left;
+}
+QScrollBar::left-arrow:horizontal, QScrollBar::right-arrow:horizontal {
+     border: 2px solid #a9d1a9;
+    width: 3px;
+    height: 3px;
+    background: #005000;
+}
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
+    background: none;
+}
